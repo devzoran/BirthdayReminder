@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 原有颜色保留兼容性 -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <!-- iOS风格主题色彩 -->
+    <color name="primary">#FF007AFF</color>
+    <color name="primary_variant">#FF0051D5</color>
+    <color name="primary_light">#FFE3F2FD</color>
+    <color name="primary_warm_pink">#FF007AFF</color>
+    <color name="primary_warm_pink_variant">#FF0051D5</color>
+    <color name="primary_light_pink">#FFE3F2FD</color>
+    
+    <!-- iOS辅助色 - 绿色系 -->
+    <color name="secondary">#FF34C759</color>
+    <color name="secondary_variant">#FF30B050</color>
+    <color name="secondary_light">#FFE8F8EA</color>
+    <color name="secondary_warm_orange">#FF34C759</color>
+    <color name="secondary_warm_orange_variant">#FF30B050</color>
+    <color name="secondary_light_orange">#FFE8F8EA</color>
+    
+    <!-- iOS背景色系 -->
+    <color name="background_soft">#FFF2F2F7</color>
+    <color name="surface_cream">#FFFFFFFF</color>
+    <color name="surface_light_pink">#FFF2F2F7</color>
+    
+    <!-- iOS文字色系 -->
+    <color name="text_primary_dark">#FF000000</color>
+    <color name="text_secondary_gray">#FF8E8E93</color>
+    <color name="text_hint_light">#FFC7C7CC</color>
+    
+    <!-- iOS功能色彩 -->
+    <color name="accent_gold">#FFFF9500</color>
+    <color name="error_soft_red">#FFFF3B30</color>
+    <color name="success_soft_green">#FF34C759</color>
+    
+    <!-- iOS卡片和分隔线 -->
+    <color name="card_background">#FFFFFFFF</color>
+    <color name="divider_light">#FFC6C6C8</color>
+    
+    <!-- iOS按钮色彩 -->
+    <color name="button_primary">#FF007AFF</color>
+    <color name="button_secondary">#FF34C759</color>
+    <color name="button_disabled">#FFC7C7CC</color>
+    
+    <!-- Material Design 3 兼容色彩 -->
+    <color name="surface">#FFFFFFFF</color>
+    <color name="surface_container">#FFFFFFFF</color>
+    <color name="text_primary">#FF000000</color>
+    <color name="on_surface">#FF000000</color>
+    <color name="on_surface_variant">#FF8E8E93</color>
+    <color name="primary_container">#FFE3F2FD</color>
+    <color name="on_primary_container">#FF007AFF</color>
+    <color name="outline_variant">#FFC6C6C8</color>
+    
+    <!-- 下拉菜单颜色 -->
+    <color name="dropdown_text_color">#FF000000</color>
+    <color name="dropdown_item_normal">#FFFFFFFF</color>
+    <color name="dropdown_item_pressed">#FFE3F2FD</color>
+    <color name="dropdown_item_selected">#FFE3F2FD</color>
+    <color name="dropdown_item_hovered">#FFF5F5F5</color>
+    <color name="dropdown_background">#FFFFFFFF</color>
+</resources>

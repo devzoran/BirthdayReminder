@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <item
+        android:id="@+id/action_toggle_view"
+        android:title="切换视图"
+        android:icon="@drawable/ic_view_list"
+        app:showAsAction="never" />
+    
+    <item
+        android:id="@+id/action_test_notification"
+        android:title="测试通知"
+        android:icon="@drawable/ic_notification"
+        app:showAsAction="never" />
+    
+    <item
+        android:id="@+id/action_add_test_birthday"
+        android:title="添加测试生日"
+        android:icon="@drawable/ic_add"
+        app:showAsAction="never" />
+        
+</menu>

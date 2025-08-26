@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- 自定义下拉菜单样式 -->
+    <style name="CustomDropdownTextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="android:popupBackground">@drawable/dropdown_background</item>
+        <item name="boxStrokeColor">@color/primary</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="hintTextColor">@color/text_secondary_gray</item>
+        <item name="startIconTint">@color/primary</item>
+    </style>
+    
+    <!-- 自定义AutoCompleteTextView样式 -->
+    <style name="CustomAutoCompleteTextView" parent="Widget.Material3.AutoCompleteTextView.OutlinedBox">
+        <item name="android:textColor">@color/text_primary_dark</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:dropDownSelector">@drawable/dropdown_item_background</item>
+    </style>
+    
+</resources>
