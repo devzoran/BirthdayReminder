@@ -42,6 +42,7 @@
     
     <!-- iOS卡片和分隔线 -->
     <color name="card_background">#FFFFFFFF</color>
+    <color name="card_background_light">#FFF8F9FA</color>
     <color name="divider_light">#FFC6C6C8</color>
     
     <!-- iOS按钮色彩 -->

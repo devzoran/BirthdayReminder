@@ -2,7 +2,7 @@
 <resources>
     
     <!-- 自定义下拉菜单样式 -->
-    <style name="CustomDropdownTextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+    <style name="CustomDropdownTextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="android:popupBackground">@drawable/dropdown_background</item>
         <item name="boxStrokeColor">@color/primary</item>
         <item name="boxCornerRadiusTopStart">12dp</item>

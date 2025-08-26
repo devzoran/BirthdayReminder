@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var simpleAdapter: BirthdaySimpleAdapter
     private var isSimpleMode = false
     private lateinit var itemTouchHelper: ItemTouchHelper
+    private lateinit var dragOptimizedAnimator: DragOptimizedItemAnimator
     
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -136,11 +138,11 @@ class MainActivity : AppCompatActivity() {
         
         // 设置排序完成监听器，确保两个适配器同步
         adapter.setOnMoveFinishedListener {
-            updateSortOrder()
+            syncSortOrderBetweenAdapters(isFromDetailedMode = true)
         }
         
         simpleAdapter.setOnMoveFinishedListener {
-            updateSortOrder()
+            syncSortOrderBetweenAdapters(isFromDetailedMode = false)
         }
         
         // 设置适配器的拖拽完成监听器
@@ -150,6 +152,22 @@ class MainActivity : AppCompatActivity() {
             // 添加顶部和底部间距，避免边缘硬切
             setPadding(0, 8, 0, 8)
             clipToPadding = false
+            
+            // 使用自定义ItemAnimator优化拖拽体验
+            dragOptimizedAnimator = DragOptimizedItemAnimator().apply {
+                // 设置更快的动画时间
+                addDuration = 200
+                changeDuration = 150  // 减少change动画时间
+                moveDuration = 200
+                removeDuration = 200
+            }
+            itemAnimator = dragOptimizedAnimator
+            
+            // 启用嵌套滚动以改善拖拽到边缘的体验
+            isNestedScrollingEnabled = true
+            
+            // 设置滚动优化
+            setHasFixedSize(false) // 允许高度变化以支持拖拽动画
         }
         
         // 设置拖拽和滑动删除功能
@@ -159,7 +177,8 @@ class MainActivity : AppCompatActivity() {
     private fun setupItemTouchHelper() {
         val currentAdapter = if (isSimpleMode) simpleAdapter else adapter
         val callback = ItemMoveCallback(
-            adapter = currentAdapter as ItemMoveInterface
+            adapter = currentAdapter as ItemMoveInterface,
+            dragOptimizedAnimator = dragOptimizedAnimator
         )
         itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(binding.recyclerViewBirthdays)
@@ -396,8 +415,42 @@ class MainActivity : AppCompatActivity() {
             .start()
     }
     
+    private fun syncSortOrderBetweenAdapters(isFromDetailedMode: Boolean) {
+        // 获取拖拽后的源适配器和目标适配器
+        val sourceAdapter = if (isFromDetailedMode) adapter else simpleAdapter
+        val targetAdapter = if (isFromDetailedMode) simpleAdapter else adapter
+        
+        // 获取源适配器的当前列表（已排序，包括拖拽后的状态）
+        val sortedList = if (isFromDetailedMode) {
+            adapter.getCurrentDisplayList()
+        } else {
+            simpleAdapter.getCurrentDisplayList()
+        }
+        
+        // 更新排序索引
+        val updatedList = sortedList.mapIndexed { index, birthday ->
+            birthday.copy(sortOrder = index)
+        }
+        
+        // 同步到ViewModel和数据库
+        viewModel.updateSortOrders(updatedList)
+        
+        // 立即同步到目标适配器
+        targetAdapter.submitList(updatedList)
+        
+        // 清空源适配器的临时列表并静默更新为最终状态，避免额外动画
+        if (isFromDetailedMode) {
+            adapter.finalizeDragResult(updatedList)
+        } else {
+            simpleAdapter.finalizeDragResult(updatedList)
+        }
+        
+        // 添加日志以便调试
+        Log.d("DragSync", "同步排序: 从${if (isFromDetailedMode) "详细" else "简洁"}模式 到 ${if (isFromDetailedMode) "简洁" else "详细"}模式, 列表大小: ${updatedList.size}")
+    }
+    
     private fun updateSortOrder() {
-        // 获取当前活动适配器的数据
+        // 保留此方法作为备用，但主要使用syncSortOrderBetweenAdapters
         val currentAdapter = if (isSimpleMode) simpleAdapter else adapter
         val currentList = currentAdapter.currentList
         
@@ -408,6 +461,10 @@ class MainActivity : AppCompatActivity() {
         
         // 同步到ViewModel和数据库
         viewModel.updateSortOrders(updatedList)
+        
+        // 立即同步到另一个适配器，确保两种模式数据一致
+        val otherAdapter = if (isSimpleMode) adapter else simpleAdapter
+        otherAdapter.submitList(updatedList)
     }
     
     private fun showPopupMenu(view: View) {

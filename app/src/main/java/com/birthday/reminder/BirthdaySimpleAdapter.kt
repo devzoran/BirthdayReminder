@@ -16,6 +16,7 @@ class BirthdaySimpleAdapter(
     private val onToggleReminder: (Birthday) -> Unit
 ) : ListAdapter<Birthday, BirthdaySimpleAdapter.BirthdayViewHolder>(BirthdayDiffCallback()), ItemMoveInterface {
 
+    private var tempList: MutableList<Birthday> = mutableListOf()
     private var dragDropComplete: (() -> Unit)? = null
     
     fun setOnMoveFinishedListener(listener: () -> Unit) {
@@ -34,16 +35,65 @@ class BirthdaySimpleAdapter(
     }
 
     override fun onRowMoved(fromPosition: Int, toPosition: Int) {
-        val list = currentList.toMutableList()
-        val item = list.removeAt(fromPosition)
-        list.add(toPosition, item)
-        submitList(list) {
-            notifyItemMoved(fromPosition, toPosition)
+        // 使用临时列表来处理拖拽，避免submitList导致的动画中断
+        if (tempList.isEmpty()) {
+            tempList = currentList.toMutableList()
         }
+        
+        // 在临时列表中移动项目
+        val item = tempList.removeAt(fromPosition)
+        tempList.add(toPosition, item)
+        
+        // 使用notifyItemMoved提供平滑的拖拽动画
+        notifyItemMoved(fromPosition, toPosition)
     }
 
     override fun onMoveFinished() {
-        dragDropComplete?.invoke()
+        // 拖拽完成后，直接触发回调而不再submitList，避免额外动画
+        if (tempList.isNotEmpty()) {
+            // 不再调用submitList，让临时列表成为当前状态
+            // tempList将在同步完成后清空
+            dragDropComplete?.invoke()
+        } else {
+            dragDropComplete?.invoke()
+        }
+    }
+    
+    // 重写getItem以在拖拽期间使用临时列表
+    override fun getItem(position: Int): Birthday {
+        return if (tempList.isNotEmpty()) {
+            tempList[position]
+        } else {
+            super.getItem(position)
+        }
+    }
+    
+    // 重写getItemCount以在拖拽期间使用临时列表
+    override fun getItemCount(): Int {
+        return if (tempList.isNotEmpty()) {
+            tempList.size
+        } else {
+            super.getItemCount()
+        }
+    }
+    
+    // 获取当前显示的完整列表（包括拖拽期间的临时状态）
+    fun getCurrentDisplayList(): List<Birthday> {
+        return if (tempList.isNotEmpty()) {
+            tempList.toList()
+        } else {
+            currentList
+        }
+    }
+    
+    // 无动画地完成拖拽结果，清空临时列表
+    fun finalizeDragResult(finalList: List<Birthday>) {
+        tempList.clear()
+        // 使用 submitList 的无回调版本，但此时DiffUtil会发现内容实际没有变化（因为UI已经是最终状态）
+        // 所以不会产生额外动画
+        if (currentList != finalList) {
+            submitList(finalList)
+        }
     }
 
     class BirthdayDiffCallback : DiffUtil.ItemCallback<Birthday>() {
@@ -136,17 +186,31 @@ class BirthdaySimpleAdapter(
         }
 
         override fun onItemSelected() {
-            // 拖拽时的视觉反馈
-            itemView.alpha = 0.8f
-            itemView.scaleX = 1.05f
-            itemView.scaleY = 1.05f
+            // 拖拽时的视觉反馈：放大、透明度和阴影
+            binding.root.animate()
+                .alpha(0.8f)
+                .scaleX(1.05f)
+                .scaleY(1.05f)
+                .setDuration(150)
+                .start()
+            binding.root.elevation = 12f
+            
+            // 添加拖拽指示
+            binding.cardContent.setBackgroundResource(R.drawable.card_dragging_background)
         }
 
         override fun onItemClear() {
-            // 恢复正常状态
-            itemView.alpha = 1.0f
-            itemView.scaleX = 1.0f
-            itemView.scaleY = 1.0f
+            // 拖拽结束时恢复正常状态
+            binding.root.animate()
+                .alpha(1.0f)
+                .scaleX(1.0f)
+                .scaleY(1.0f)
+                .setDuration(200)
+                .start()
+            binding.root.elevation = 2f
+            
+            // 恢复正常背景
+            binding.cardContent.setBackgroundResource(R.drawable.card_content_background)
         }
     }
 }

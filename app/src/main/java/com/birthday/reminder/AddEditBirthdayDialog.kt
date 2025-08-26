@@ -2,6 +2,7 @@ package com.birthday.reminder
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -108,18 +109,17 @@ class AddEditBirthdayDialog : DialogFragment() {
     
     private fun setupViews() {
         // 设置关系下拉菜单
-        val relationships = arrayOf("", "父亲", "母亲", "兄弟", "姐妹", "爷爷", "奶奶", "外公", "外婆", "配偶", "儿子", "女儿", "朋友", "其他")
-        val relationshipAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, relationships)
+        val relationships = arrayOf("父亲", "母亲", "兄弟", "姐妹", "爷爷", "奶奶", "外公", "外婆", "配偶", "儿子", "女儿", "朋友", "其他")
+        val relationshipAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, relationships)
         binding.autoCompleteRelationship.setAdapter(relationshipAdapter)
         
         // 设置提前提醒天数下拉菜单
         val reminderDays = arrayOf("当天", "1天前", "2天前", "3天前", "7天前")
-        val reminderAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, reminderDays)
+        val reminderAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, reminderDays)
         binding.autoCompleteReminderDays.setAdapter(reminderAdapter)
         
-        // 设置下拉菜单背景
-        binding.autoCompleteRelationship.setDropDownBackgroundResource(R.drawable.dropdown_background)
-        binding.autoCompleteReminderDays.setDropDownBackgroundResource(R.drawable.dropdown_background)
+        // MaterialAutoCompleteTextView 会自动处理点击事件，无需手动设置监听器
+        Log.d("DropdownDebug", "下拉菜单配置完成")
     }
     
     private fun populateFields() {
