@@ -438,7 +438,7 @@ class MainActivity : AppCompatActivity() {
         // 立即同步到目标适配器
         targetAdapter.submitList(updatedList)
         
-        // 清空源适配器的临时列表并静默更新为最终状态，避免额外动画
+        // 确保源适配器也有最新数据（通过finalizeDragResult）
         if (isFromDetailedMode) {
             adapter.finalizeDragResult(updatedList)
         } else {

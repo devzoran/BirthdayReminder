@@ -31,7 +31,10 @@ class BirthdaySimpleAdapter(
     }
 
     override fun onBindViewHolder(holder: BirthdayViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        // 添加安全检查，确保位置有效
+        if (position >= 0 && position < getItemCount()) {
+            holder.bind(getItem(position))
+        }
     }
 
     override fun onRowMoved(fromPosition: Int, toPosition: Int) {
@@ -49,26 +52,28 @@ class BirthdaySimpleAdapter(
     }
 
     override fun onMoveFinished() {
-        // 拖拽完成后，直接触发回调而不再submitList，避免额外动画
+        // 拖拽完成后，立即将临时列表提交为正式数据，确保数据一致性
         if (tempList.isNotEmpty()) {
-            // 不再调用submitList，让临时列表成为当前状态
-            // tempList将在同步完成后清空
+            val finalList = tempList.toList()
+            // 立即提交数据但不触发动画（因为UI已经是最终状态）
+            submitList(finalList)
+            tempList.clear()
             dragDropComplete?.invoke()
         } else {
             dragDropComplete?.invoke()
         }
     }
     
-    // 重写getItem以在拖拽期间使用临时列表
+    // 在拖拽期间临时重写数据获取方法
     override fun getItem(position: Int): Birthday {
-        return if (tempList.isNotEmpty()) {
+        return if (tempList.isNotEmpty() && position < tempList.size) {
             tempList[position]
         } else {
             super.getItem(position)
         }
     }
     
-    // 重写getItemCount以在拖拽期间使用临时列表
+    // 在拖拽期间临时重写数量获取方法
     override fun getItemCount(): Int {
         return if (tempList.isNotEmpty()) {
             tempList.size
@@ -86,11 +91,9 @@ class BirthdaySimpleAdapter(
         }
     }
     
-    // 无动画地完成拖拽结果，清空临时列表
+    // 无动画地完成拖拽结果，此方法现在主要用于确保数据同步
     fun finalizeDragResult(finalList: List<Birthday>) {
-        tempList.clear()
-        // 使用 submitList 的无回调版本，但此时DiffUtil会发现内容实际没有变化（因为UI已经是最终状态）
-        // 所以不会产生额外动画
+        // 由于onMoveFinished已经处理了数据提交，这里只需要确保列表是最新的
         if (currentList != finalList) {
             submitList(finalList)
         }
